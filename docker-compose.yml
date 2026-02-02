@@ -1,0 +1,58 @@
+version: '3.2'
+
+services:
+  battleship_service:
+    build:
+      context: ./battleship-service
+    container_name: battleship_service
+    depends_on:
+      - kafka
+    ports:
+      - 8080:8080
+      - 8787:8787
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/battleship-service/api/engineering/ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 200
+  battleship_computer_service:
+    build:
+      context: ./battleship-computer-service
+    container_name: battleship_computer_service
+    depends_on:
+      - kafka
+    ports:
+      - 8081:8080
+      - 8788:8787
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/battleship-computer-service/api/engineering/ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 200
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+networks:
+  default:
+    external:
+      name: battleship_net

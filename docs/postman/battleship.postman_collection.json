@@ -1,0 +1,532 @@
+{
+	"info": {
+		"_postman_id": "727bc1c5-eae7-4923-b94b-f8fc812da0dd",
+		"name": "battleship",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "battleship-service",
+			"item": [
+				{
+					"name": "engineering",
+					"item": [
+						{
+							"name": "Ping",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Antonio\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-computer-service-host}}/{{battleship-computer-service-context}}/api/engineering/ping",
+									"protocol": "http",
+									"host": [
+										"{{battleship-computer-service-host}}"
+									],
+									"path": [
+										"{{battleship-computer-service-context}}",
+										"api",
+										"engineering",
+										"ping"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "me vs computer (me wins)",
+					"item": [
+						{
+							"name": "New game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status test\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set('gameId', jsonData.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"vsComputer\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/new",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy ships",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status test\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"shipsDeploy\": [\n        {\n            \"shipType\": \"Destroyer\",\n            \"coordinates\": [\"A1\", \"B1\"]\n        },\n        {\n            \"shipType\": \"Submarine\",\n            \"coordinates\": [\"B5\", \"B6\", \"B7\"]\n        },\n        {\n            \"shipType\": \"Cruiser\",\n            \"coordinates\": [\"F7\", \"G7\", \"H7\"]\n        },\n        {\n            \"shipType\": \"Battleship\",\n            \"coordinates\": [\"D2\", \"D3\", \"D4\", \"D5\"]\n        },\n        {\n            \"shipType\": \"AircraftCarrier\",\n            \"coordinates\": [\"B9\", \"C9\", \"D9\", \"E9\", \"F9\"]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/ships/deploy",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"ships",
+										"deploy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fire A1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Destroyer HIT\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.fireOutcome).to.eql(\"HIT\");",
+											"});",
+											"pm.test(\"Game not won\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.gameWon).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"coordinate\": \"A1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/fire",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"fire"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fire B1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Destroyer SUNK\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.fireOutcome).to.eql(\"SUNK\");",
+											"});",
+											"pm.test(\"Game not won\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.gameWon).to.eql(false);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"coordinate\": \"B1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/fire",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"fire"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "me vs opponent",
+					"item": [
+						{
+							"name": "New game",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set('gameId', jsonData.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"vsComputer\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/new",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"new"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Join game (opponent)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"opponent\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/join",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"join"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy ships (me)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"shipsDeploy\": [\n        {\n            \"shipType\": \"Destroyer\",\n            \"coordinates\": [\"A1\", \"B1\"]\n        },\n        {\n            \"shipType\": \"Submarine\",\n            \"coordinates\": [\"B5\", \"B6\", \"B7\"]\n        },\n        {\n            \"shipType\": \"Cruiser\",\n            \"coordinates\": [\"F7\", \"G7\", \"H7\"]\n        },\n        {\n            \"shipType\": \"Battleship\",\n            \"coordinates\": [\"D2\", \"D3\", \"D4\", \"D5\"]\n        },\n        {\n            \"shipType\": \"AircraftCarrier\",\n            \"coordinates\": [\"B9\", \"C9\", \"D9\", \"E9\", \"F9\"]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/ships/deploy",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"ships",
+										"deploy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deploy ships (opponent)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"opponent\",\n    \"shipsDeploy\": [\n        {\n            \"shipType\": \"Destroyer\",\n            \"coordinates\": [\"A1\", \"B1\"]\n        },\n        {\n            \"shipType\": \"Submarine\",\n            \"coordinates\": [\"B5\", \"B6\", \"B7\"]\n        },\n        {\n            \"shipType\": \"Cruiser\",\n            \"coordinates\": [\"F7\", \"G7\", \"H7\"]\n        },\n        {\n            \"shipType\": \"Battleship\",\n            \"coordinates\": [\"D2\", \"D3\", \"D4\", \"D5\"]\n        },\n        {\n            \"shipType\": \"AircraftCarrier\",\n            \"coordinates\": [\"B9\", \"C9\", \"D9\", \"E9\", \"F9\"]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/ships/deploy",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"ships",
+										"deploy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fire (me)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"me\",\n    \"coordinate\": \"D3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/fire",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"fire"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fire (opponent)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"playerId\": \"opponent\",\n    \"coordinate\": \"B8\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-service-host}}/{{battleship-service-context}}/api/games/{{gameId}}/fields/fire",
+									"protocol": "http",
+									"host": [
+										"{{battleship-service-host}}"
+									],
+									"path": [
+										"{{battleship-service-context}}",
+										"api",
+										"games",
+										"{{gameId}}",
+										"fields",
+										"fire"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "battleship-computer-service",
+			"item": [
+				{
+					"name": "engineering",
+					"item": [
+						{
+							"name": "Ping",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Antonio\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{battleship-computer-service-host}}/{{battleship-computer-service-context}}/api/engineering/ping",
+									"protocol": "http",
+									"host": [
+										"{{battleship-computer-service-host}}"
+									],
+									"path": [
+										"{{battleship-computer-service-context}}",
+										"api",
+										"engineering",
+										"ping"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
