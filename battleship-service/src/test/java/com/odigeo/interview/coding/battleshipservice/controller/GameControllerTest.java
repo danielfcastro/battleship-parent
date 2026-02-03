@@ -9,7 +9,6 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipservice.model.Game;
 import com.odigeo.interview.coding.battleshipservice.service.GameService;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;

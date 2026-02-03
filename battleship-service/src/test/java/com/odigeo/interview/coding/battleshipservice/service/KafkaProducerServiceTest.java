@@ -5,7 +5,6 @@ import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
 import com.odigeo.interview.coding.battleshipservice.exception.KafkaProducerException;
 import fish.payara.cloud.connectors.kafka.api.KafkaConnection;
 import fish.payara.cloud.connectors.kafka.api.KafkaConnectionFactory;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -19,7 +18,6 @@ import static org.testng.Assert.*;
 
 public class KafkaProducerServiceTest {
 
-    @InjectMocks
     KafkaProducerService kafkaProducerService;
 
     @Mock
@@ -32,6 +30,7 @@ public class KafkaProducerServiceTest {
     @BeforeClass
     public void init(){
         MockitoAnnotations.initMocks(this);
+        kafkaProducerService = new KafkaProducerService();
     }
 
     @AfterMethod

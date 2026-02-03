@@ -4,7 +4,6 @@ import com.odigeo.interview.coding.battleshipservice.model.Cell;
 import com.odigeo.interview.coding.battleshipservice.model.Coordinate;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,7 +26,6 @@ public class FieldServiceTest {
     @Mock
     private CoordinateService coordinateService;
 
-    @InjectMocks
     private FieldService fieldService;
 
     private List<Ship> shipsDeployment;
@@ -36,6 +34,7 @@ public class FieldServiceTest {
     @BeforeMethod
     public void init() {
         initMocks(this);
+        fieldService = new FieldService();
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         shipsDeployment = ShipDeploymentBuilder.buildValidDeployment();
         field = fieldService.buildField(shipsDeployment);

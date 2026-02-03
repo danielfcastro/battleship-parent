@@ -22,7 +22,6 @@ import com.odigeo.interview.coding.battleshipservice.repository.GameRepositoryIm
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentValidator;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;

@@ -2,7 +2,6 @@ package com.odigeo.interview.coding.battleshipcomputerservice.controller;
 
 import com.odigeo.interview.coding.battleshipcomputerservice.service.BattleshipService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
