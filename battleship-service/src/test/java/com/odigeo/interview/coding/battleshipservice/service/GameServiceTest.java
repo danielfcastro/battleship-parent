@@ -42,7 +42,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 public class GameServiceTest {
 
@@ -273,6 +272,8 @@ public class GameServiceTest {
         command.setCoordinate(gridCoordinate[0]);
         GameFireResponse fireResponse = gameService.fire("12345", command);
         assertNotNull(fireResponse);
+        assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.SUNK);
+        assertEquals(fireResponse.getShipTypeSunk(), "Destroyer");
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
         verify(gameRepository, times(1)).saveOrUpdateGame(game);
     }
