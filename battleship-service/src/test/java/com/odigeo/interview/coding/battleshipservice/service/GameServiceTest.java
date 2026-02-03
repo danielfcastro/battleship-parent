@@ -9,6 +9,7 @@ import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
 import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
+import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameStartException;
 import com.odigeo.interview.coding.battleshipservice.exception.NotYourTurnException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
@@ -22,7 +23,6 @@ import com.odigeo.interview.coding.battleshipservice.repository.GameRepositoryIm
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentValidator;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
@@ -42,7 +42,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 public class GameServiceTest {
 
@@ -59,12 +58,12 @@ public class GameServiceTest {
     @Mock
     private Game game;
 
-    @InjectMocks
     private GameService gameService;
 
     @BeforeMethod
     public void init() {
         initMocks(this);
+        gameService = new GameService(coordinateService, fieldService, kafkaProducerService, gameRepository, shipDeploymentValidator);
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         when(fieldService.allShipsSunk(any())).thenCallRealMethod();
         when(fieldService.isShipSunk(any(), any())).thenCallRealMethod();
@@ -273,6 +272,8 @@ public class GameServiceTest {
         command.setCoordinate(gridCoordinate[0]);
         GameFireResponse fireResponse = gameService.fire("12345", command);
         assertNotNull(fireResponse);
+        assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.SUNK);
+        assertEquals(fireResponse.getShipTypeSunk(), "Destroyer");
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
         verify(gameRepository, times(1)).saveOrUpdateGame(game);
     }
@@ -324,6 +325,31 @@ public class GameServiceTest {
             }
         }
         return field;
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testJoinGameThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        GameJoinCommand command = new GameJoinCommand();
+        command.setPlayerId("player2");
+        gameService.joinGame("not-found", command);
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testDeployShipsThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        DeployShipsCommand command = new DeployShipsCommand();
+        command.setPlayerId("player1");
+        gameService.deployShips("not-found", command);
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testFireThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        GameFireCommand command = new GameFireCommand();
+        command.setPlayerId("player1");
+        command.setCoordinate("A1");
+        gameService.fire("not-found", command);
     }
 
 }

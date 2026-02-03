@@ -4,7 +4,6 @@ import com.odigeo.interview.coding.battleshipservice.model.Cell;
 import com.odigeo.interview.coding.battleshipservice.model.Coordinate;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -13,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -28,7 +26,6 @@ public class FieldServiceTest {
     @Mock
     private CoordinateService coordinateService;
 
-    @InjectMocks
     private FieldService fieldService;
 
     private List<Ship> shipsDeployment;
@@ -37,6 +34,7 @@ public class FieldServiceTest {
     @BeforeMethod
     public void init() {
         initMocks(this);
+        fieldService = new FieldService();
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         shipsDeployment = ShipDeploymentBuilder.buildValidDeployment();
         field = fieldService.buildField(shipsDeployment);
@@ -52,9 +50,29 @@ public class FieldServiceTest {
 
     @Test
     public void testShipSunkNoHit() {
-        List<Coordinate> coordinates = shipsDeployment.get(0).getCoordinates();
         boolean isShipSunk = fieldService.isShipSunk(field, shipsDeployment.get(0));
         assertFalse(isShipSunk);
+    }
+
+    @Test
+    public void testShipSunkFullHit() {
+        List<Coordinate> coordinates = shipsDeployment.get(0).getCoordinates();
+        coordinates.forEach(c -> field[c.getRow()][c.getColumn()].hit());
+        boolean isShipSunk = fieldService.isShipSunk(field, shipsDeployment.get(0));
+        assertTrue(isShipSunk);
+    }
+
+    @Test
+    public void testAllShipsSunk() {
+        shipsDeployment.forEach(ship ->
+            ship.getCoordinates().forEach(c -> field[c.getRow()][c.getColumn()].hit())
+        );
+        assertTrue(fieldService.allShipsSunk(field));
+    }
+
+    @Test
+    public void testAllShipsSunkNotYet() {
+        assertFalse(fieldService.allShipsSunk(field));
     }
 
     @Test

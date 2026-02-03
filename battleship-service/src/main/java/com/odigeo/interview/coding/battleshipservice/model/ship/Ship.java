@@ -12,7 +12,7 @@ public abstract class Ship {
     private final ShipType shipType;
     private List<Coordinate> coordinates;
 
-    public Ship(ShipType shipType) {
+    protected Ship(ShipType shipType) {
         this.id = UUID.randomUUID();
         this.shipType = shipType;
     }

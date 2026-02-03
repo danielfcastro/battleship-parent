@@ -37,8 +37,8 @@ public class BattleshipClientTest {
 
     @Test
     public void testNewInstance() {
-        BattleshipClient battleshipClient = new BattleshipClient();
-        assertNotNull(battleshipClient);
+        BattleshipClient client = new BattleshipClient();
+        assertNotNull(client);
     }
 
     @Test

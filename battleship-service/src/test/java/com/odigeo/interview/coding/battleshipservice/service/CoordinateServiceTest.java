@@ -24,7 +24,7 @@ public class CoordinateServiceTest {
 
     @Test(expectedExceptions = WrongCoordinateException.class, expectedExceptionsMessageRegExp = "Coordinate AB is wrong")
     public void testDecodeWrongCoordinatePattern() {
-        Coordinate coordinate = coordinateService.decodeCoordinate("AB");
+        coordinateService.decodeCoordinate("AB");
     }
 
 }

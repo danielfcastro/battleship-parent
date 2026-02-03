@@ -15,7 +15,7 @@ public final class BattleshipClientCommandBuilder {
         command.setPlayerId(ComputerConfiguration.PLAYER_NAME);
         command.setShipsDeploy(new ArrayList<>());
         command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1"));
-        command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1"));
+        command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("Submarine", "D1"));
         command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3"));
         command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7"));
         command.getShipsDeploy().add(new DeployShipsCommand.ShipDeployment("AircraftCarrier", "B2", "C2", "D2", "E2", "F2"));

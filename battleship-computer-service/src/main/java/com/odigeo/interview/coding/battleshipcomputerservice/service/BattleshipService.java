@@ -13,11 +13,14 @@ public class BattleshipService {
 
     private static final Logger logger = LoggerFactory.getLogger(BattleshipService.class);
 
-    @Inject
-    private BattleshipClient client;
+    private final BattleshipClient client;
+    private final CoordinateService coordinateService;
 
     @Inject
-    private CoordinateService coordinateService;
+    public BattleshipService(BattleshipClient client, CoordinateService coordinateService) {
+        this.client = client;
+        this.coordinateService = coordinateService;
+    }
 
     public void joinGame(String gameId) {
         client.joinGame(gameId, BattleshipClientCommandBuilder.buildGameJoinCommand());
@@ -42,7 +45,8 @@ public class BattleshipService {
         try {
             Thread.sleep(600);
         } catch (InterruptedException e) {
-            // Nothing to do
+            Thread.currentThread().interrupt();
+            logger.warn("Computer thinking interrupted", e);
         }
         return coordinateService.randomCoordinate();
     }

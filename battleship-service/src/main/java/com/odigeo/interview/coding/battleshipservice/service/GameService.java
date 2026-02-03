@@ -37,20 +37,22 @@ public class GameService {
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    @Inject
-    private CoordinateService coordinateService;
+    private final CoordinateService coordinateService;
+    private final FieldService fieldService;
+    private final KafkaProducerService kafkaProducerService;
+    private final GameRepository repository;
+    private final ShipDeploymentValidator shipDeploymentValidator;
 
     @Inject
-    private FieldService fieldService;
-
-    @Inject
-    private KafkaProducerService kafkaProducerService;
-
-    @Inject
-    private GameRepository repository;
-
-    @Inject
-    private ShipDeploymentValidator shipDeploymentValidator;
+    public GameService(CoordinateService coordinateService, FieldService fieldService,
+                       KafkaProducerService kafkaProducerService, GameRepository repository,
+                       ShipDeploymentValidator shipDeploymentValidator) {
+        this.coordinateService = coordinateService;
+        this.fieldService = fieldService;
+        this.kafkaProducerService = kafkaProducerService;
+        this.repository = repository;
+        this.shipDeploymentValidator = shipDeploymentValidator;
+    }
 
     public Game newGame(GameStartCommand command) {
         Game game = new Game();
@@ -102,7 +104,7 @@ public class GameService {
             try {
                 Ship ship = ShipType.getByTypeName(shipDeployment.getShipType()).newInstance();
                 ship.setCoordinates(shipDeployment.getCoordinates().stream()
-                        .map(coordinate -> coordinateService.decodeCoordinate(coordinate))
+                        .map(coordinateService::decodeCoordinate)
                         .collect(Collectors.toList()));
                 ships.add(ship);
             } catch (Exception e) {
@@ -112,6 +114,7 @@ public class GameService {
         return ships;
     }
 
+    @SuppressWarnings("java:S3776") // Complex game logic requires nested conditions for fire outcome
     public GameFireResponse fire(String gameId, GameFireCommand command) {
         Game game = repository.getGame(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
 
@@ -142,7 +145,7 @@ public class GameService {
             cell.hit();
             Ship ship = cell.getShip();
             if (fieldService.isShipSunk(field, ship)) {
-                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK);
+                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK, ship.getShipType().getShipTypeName());
                 if (fieldService.allShipsSunk(field)) {
                     response.setGameWon(true);
                     game.setWinner(command.getPlayerId());
