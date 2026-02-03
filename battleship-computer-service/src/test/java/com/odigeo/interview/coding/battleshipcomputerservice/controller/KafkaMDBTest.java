@@ -22,7 +22,15 @@ public class KafkaMDBTest {
     @BeforeMethod
     private void init() {
         initMocks(this);
-        kafkaMDB = new KafkaMDB(battleshipService);
+        kafkaMDB = new KafkaMDB();
+        // Inject mocked service via reflection
+        try {
+            java.lang.reflect.Field field = KafkaMDB.class.getDeclaredField("battleshipService");
+            field.setAccessible(true);
+            field.set(kafkaMDB, battleshipService);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         when(consumerRecord.value()).thenReturn("{\"gameId\":\"3238eef4-5e2c-4add-accb-4ca9514d5aa2\"}");
     }
 

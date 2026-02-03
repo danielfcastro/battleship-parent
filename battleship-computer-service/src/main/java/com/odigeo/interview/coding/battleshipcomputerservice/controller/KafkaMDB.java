@@ -33,11 +33,12 @@ public class KafkaMDB implements KafkaListener {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaMDB.class);
 
-    private final BattleshipService battleshipService;
-
     @Inject
-    public KafkaMDB(BattleshipService battleshipService) {
-        this.battleshipService = battleshipService;
+    @SuppressWarnings("java:S6813") // Field injection required by EJB - MessageDriven beans need default constructor
+    private BattleshipService battleshipService;
+
+    public KafkaMDB() {
+        // Default constructor required by EJB
     }
 
     @OnRecord( topics={"battleship.game.new"})

@@ -27,7 +27,15 @@ public class GameControllerTest {
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        gameController = new GameController(gameService);
+        gameController = new GameController();
+        // Inject mocked service via reflection
+        try {
+            java.lang.reflect.Field field = GameController.class.getDeclaredField("service");
+            field.setAccessible(true);
+            field.set(gameController, gameService);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterMethod

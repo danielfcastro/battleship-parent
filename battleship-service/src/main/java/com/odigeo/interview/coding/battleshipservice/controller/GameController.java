@@ -22,11 +22,12 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GameController {
 
-    private final GameService service;
-
     @Inject
-    public GameController(GameService service) {
-        this.service = service;
+    @SuppressWarnings("java:S6813") // Field injection required by CDI - WildFly needs default constructor
+    private GameService service;
+
+    public GameController() {
+        // Default constructor required by CDI
     }
 
     @POST
