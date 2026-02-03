@@ -35,9 +35,6 @@
         <sonar.host.url>http://192.168.100.16:9000</sonar.host.url>
         <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
 
-        <!-- TEMPORÁRIO: token no POM -->
-        <sonar.login>sqp_e56d1d503995ec8f00acb7975228a5febf16e7fe</sonar.login>
-
         <sonar.exclusions>
             **/target/**
             **/*.rar
