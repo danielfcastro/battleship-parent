@@ -1,45 +1,20 @@
-version: '3.2'
-
 services:
-  battleship_service:
-    build:
-      context: ./battleship-service
-    container_name: battleship_service
-    depends_on:
-      - kafka
-    ports:
-      - 8080:8080
-      - 8787:8787
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/battleship-service/api/engineering/ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 200
-  battleship_computer_service:
-    build:
-      context: ./battleship-computer-service
-    container_name: battleship_computer_service
-    depends_on:
-      - kafka
-    ports:
-      - 8081:8080
-      - 8788:8787
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/battleship-computer-service/api/engineering/ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 200
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
+    networks:
+      - battleship_net
     ports:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
+    networks:
+      - battleship_net
     depends_on:
       - zookeeper
     ports:
@@ -51,8 +26,35 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: on-failure
+
+  battleship_service:
+    build:
+      context: ./battleship-service
+    container_name: battleship_service
+    depends_on:
+      - kafka
+    networks:
+      - battleship_net
+    ports:
+      - 8080:8080
+      - 8787:8787
+    restart: on-failure
+
+  battleship_computer_service:
+    build:
+      context: ./battleship-computer-service
+    container_name: battleship_computer_service
+    depends_on:
+      - kafka
+    networks:
+      - battleship_net
+    ports:
+      - 8081:8080
+      - 8788:8787
+    restart: on-failure
 
 networks:
-  default:
-    external:
-      name: battleship_net
+  battleship_net:
+    name: battleship_net
+    external: true

@@ -6,13 +6,14 @@
 
     <groupId>com.odigeo.interview.coding</groupId>
     <artifactId>battleship-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>battleship-api</module>
         <module>battleship-service</module>
         <module>battleship-computer-service</module>
-        <module>battleship-api</module>
+        <module>battleship-play</module>
     </modules>
 
     <properties>

@@ -18,11 +18,20 @@ public class FieldService {
     private CoordinateService coordinateService;
 
     public boolean allShipsSunk(Cell[][] field) {
-        return false;
+        for (int row = 0; row < field.length; row++) {
+            for (int col = 0; col < field[row].length; col++) {
+                Cell cell = field[row][col];
+                if (!cell.isWater() && !cell.isHit()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public boolean isShipSunk(Cell[][] field, Ship ship) {
-        return false;
+        return ship.getCoordinates().stream()
+                .allMatch(coordinate -> field[coordinate.getRow()][coordinate.getColumn()].isHit());
     }
 
     public Cell[][] buildField(List<Ship> shipsDeployment) {

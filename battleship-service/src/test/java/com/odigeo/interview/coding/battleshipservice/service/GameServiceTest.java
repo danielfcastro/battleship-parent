@@ -273,6 +273,8 @@ public class GameServiceTest {
         command.setCoordinate(gridCoordinate[0]);
         GameFireResponse fireResponse = gameService.fire("12345", command);
         assertNotNull(fireResponse);
+        assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.SUNK);
+        assertEquals(fireResponse.getShipTypeSunk(), "Destroyer");
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
         verify(gameRepository, times(1)).saveOrUpdateGame(game);
     }

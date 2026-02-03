@@ -17,7 +17,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<DeployShipsCommand.ShipDeployment> buildShipsDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "B2", "C2", "D2", "E2", "F2");
@@ -26,7 +26,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildValidDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "B2", "C2", "D2", "E2", "F2");
@@ -36,7 +36,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildDuplicatedShipsDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment destroyer2 = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
@@ -46,7 +46,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildWrongNumberOfShipsDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         ArrayList<DeployShipsCommand.ShipDeployment> shipDeployments = new ArrayList<>(Arrays.asList(destroyer, submarine, cruiser, battleship));
@@ -55,7 +55,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildOverlappingShipsDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "A1", "B1", "C1", "D1", "E1");
@@ -65,7 +65,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildWrongShipLengthDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "B2");
@@ -75,7 +75,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildShipOutOfGridDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "G0", "G1", "G2", "G3", "G4");
@@ -85,7 +85,7 @@ public final class ShipDeploymentBuilder {
 
     public static List<Ship> buildShipNotContiguousDeployment() {
         DeployShipsCommand.ShipDeployment destroyer = new DeployShipsCommand.ShipDeployment("Destroyer", "A1", "B1");
-        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1", "E1", "F1");
+        DeployShipsCommand.ShipDeployment submarine = new DeployShipsCommand.ShipDeployment("Submarine", "D1");
         DeployShipsCommand.ShipDeployment cruiser = new DeployShipsCommand.ShipDeployment("Cruiser", "H1", "H2", "H3");
         DeployShipsCommand.ShipDeployment battleship = new DeployShipsCommand.ShipDeployment("Battleship", "A4", "A5", "A6", "A7");
         DeployShipsCommand.ShipDeployment aircraftCarrier = new DeployShipsCommand.ShipDeployment("AircraftCarrier", "G1", "G3", "G4", "G5", "G6");
