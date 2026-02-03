@@ -4,6 +4,8 @@ import com.odigeo.interview.coding.battleshipservice.model.Game;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -21,7 +23,7 @@ public class GameRepositoryImplTest {
 
     @Test
     public void testNewGame() {
-        assertTrue(gameRepository.getGames().size() == 0);
+        assertTrue(gameRepository.getGames().isEmpty());
     }
 
 
@@ -29,7 +31,7 @@ public class GameRepositoryImplTest {
     public void testSaveGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        assertTrue(gameRepository.getGames().size() > 0);
+        assertFalse(gameRepository.getGames().isEmpty());
         assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
     }
 
@@ -52,7 +54,7 @@ public class GameRepositoryImplTest {
     public void testGetGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        assertTrue(gameRepository.getGames().size() > 0);
+        assertFalse(gameRepository.getGames().isEmpty());
         assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
     }
 
@@ -62,7 +64,7 @@ public class GameRepositoryImplTest {
         newGame.setId(String.valueOf(new Random().nextInt()));
         newGame.setCreatedAt(Instant.now());
         newGame.setPlayerOneId("P1");
-        newGame.isVsComputer();
+        newGame.setVsComputer(true);
         newGame.setPlayerTurn(1);
         return newGame;
     }
