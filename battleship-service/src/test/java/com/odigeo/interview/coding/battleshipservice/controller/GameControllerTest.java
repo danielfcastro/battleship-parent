@@ -69,7 +69,7 @@ public class GameControllerTest {
         GameStartCommand gameStartCommand = new GameStartCommand();
         Game game = new Game();
         createGame(gameStartCommand, game);
-        GameResponse gameResponse = gameController.newGame(gameStartCommand);
+        gameController.newGame(gameStartCommand);
         DeployShipsCommand deployShipsCommand = new DeployShipsCommand();
         deployShipsCommand.setPlayerId(gameStartCommand.getPlayerId());
         deployShipsCommand.setShipsDeploy(ShipDeploymentBuilder.buildShipsDeployment());
@@ -81,7 +81,7 @@ public class GameControllerTest {
         GameStartCommand gameStartCommand = new GameStartCommand();
         Game game = new Game();
         createGame(gameStartCommand, game);
-        GameResponse gameResponse = gameController.newGame(gameStartCommand);
+        gameController.newGame(gameStartCommand);
         GameFireCommand gameFireCommand = new GameFireCommand();
         gameFireCommand.setCoordinate("0,0");
         gameFireCommand.setPlayerId(gameStartCommand.getPlayerId());
