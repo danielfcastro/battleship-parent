@@ -77,7 +77,7 @@ public class BattleshipClient {
         reader.close();
 
         if (responseCode < 200 || responseCode >= 300) {
-            throw new IOException("HTTP error " + responseCode + ": " + response.toString());
+            throw new IOException("HTTP error " + responseCode + ": " + response);
         }
 
         return response.toString();

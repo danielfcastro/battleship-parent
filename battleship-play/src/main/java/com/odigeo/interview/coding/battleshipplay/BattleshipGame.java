@@ -23,9 +23,9 @@ public class BattleshipGame {
     private final BattleshipClient client;
     private final String playerId;
     private String gameId;
-    private Board myBoard;
-    private Board opponentBoard;
-    private FiringStrategy firingStrategy;
+    private final Board myBoard;
+    private final Board opponentBoard;
+    private final FiringStrategy firingStrategy;
 
     private int shotsFired = 0;
     private int hits = 0;
@@ -50,7 +50,10 @@ public class BattleshipGame {
             game.start();
         } catch (Exception e) {
             System.err.println("\n❌ Error: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Stack trace:");
+            for (StackTraceElement element : e.getStackTrace()) {
+                System.err.println("\t" + element);
+            }
             System.exit(1);
         }
     }
@@ -224,10 +227,10 @@ public class BattleshipGame {
         String separator = "==================================================";
         System.out.println("\n" + separator);
         System.out.println("YOUR BOARD (Your Ships):");
-        myBoard.display(true);
+        myBoard.display();
 
         System.out.println("\nOPPONENT'S BOARD (Your Tracking):");
-        opponentBoard.display(false);
+        opponentBoard.display();
         System.out.println(separator);
 
         System.out.printf("\n📊 Stats: Shots: %d | Hits: %d | Misses: %d | Accuracy: %.1f%%\n",

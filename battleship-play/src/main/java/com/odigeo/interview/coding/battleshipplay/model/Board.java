@@ -64,7 +64,7 @@ public class Board {
         return targets;
     }
 
-    public void display(boolean showShips) {
+    public void display() {
         System.out.println("\n    A B C D E F G H I J");
         System.out.println("  +---------------------+");
 
@@ -94,7 +94,7 @@ public class Board {
         int col = COLUMNS.indexOf(Character.toUpperCase(colChar));
         int row = Integer.parseInt(coordinate.substring(1)) - 1;
 
-        if (col < 0 || col >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) {
+        if (col < 0 || row < 0 || row >= BOARD_SIZE) {
             throw new IllegalArgumentException("Coordinate out of bounds: " + coordinate);
         }
 

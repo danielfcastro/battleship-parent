@@ -43,7 +43,7 @@ public class GameFireResponse {
     }
 
     public enum FireOutcome {
-        MISS, HIT, SUNK;
+        MISS, HIT, SUNK
     }
 
 }
