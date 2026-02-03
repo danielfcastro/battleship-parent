@@ -9,8 +9,6 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.TEXT_PLAIN)
 public class EngineeringController {
 
-    public EngineeringController() { }
-
     @GET
     @Path("/ping")
     public String ping() {

@@ -135,7 +135,7 @@ public class Board {
         for (Map.Entry<String, Boolean> entry : shipsStatus.entrySet()) {
             String shipName = entry.getKey();
             boolean sunk = entry.getValue();
-            status.append(String.format("  %s %-18s %s\n",
+            status.append(String.format("  %s %-18s %s%n",
                 sunk ? "☠️" : "🚢",
                 shipName,
                 sunk ? "[SUNK]" : "[AFLOAT]"));

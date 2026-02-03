@@ -22,7 +22,6 @@ import com.odigeo.interview.coding.battleshipservice.repository.GameRepositoryIm
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentValidator;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.AfterMethod;
@@ -58,12 +57,12 @@ public class GameServiceTest {
     @Mock
     private Game game;
 
-    @InjectMocks
     private GameService gameService;
 
     @BeforeMethod
     public void init() {
         initMocks(this);
+        gameService = new GameService(coordinateService, fieldService, kafkaProducerService, gameRepository, shipDeploymentValidator);
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         when(fieldService.allShipsSunk(any())).thenCallRealMethod();
         when(fieldService.isShipSunk(any(), any())).thenCallRealMethod();

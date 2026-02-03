@@ -48,6 +48,14 @@ public class BattleshipGame {
 
         try {
             game.start();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("\n❌ Error: " + e.getMessage());
+            System.err.println("Stack trace:");
+            for (StackTraceElement element : e.getStackTrace()) {
+                System.err.println("\t" + element);
+            }
+            System.exit(1);
         } catch (Exception e) {
             System.err.println("\n❌ Error: " + e.getMessage());
             System.err.println("Stack trace:");
@@ -233,7 +241,7 @@ public class BattleshipGame {
         opponentBoard.display();
         System.out.println(separator);
 
-        System.out.printf("\n📊 Stats: Shots: %d | Hits: %d | Misses: %d | Accuracy: %.1f%%\n",
+        System.out.printf("%n📊 Stats: Shots: %d | Hits: %d | Misses: %d | Accuracy: %.1f%%%n",
                 shotsFired, hits, misses,
                 shotsFired > 0 ? (hits * 100.0 / shotsFired) : 0.0);
         System.out.println("\n⚓ ENEMY FLEET STATUS:");
@@ -253,7 +261,7 @@ public class BattleshipGame {
         System.out.println("  Total Shots Fired: " + shotsFired);
         System.out.println("  Hits: " + hits);
         System.out.println("  Misses: " + misses);
-        System.out.printf("  Accuracy: %.1f%%\n", shotsFired > 0 ? (hits * 100.0 / shotsFired) : 0.0);
+        System.out.printf("  Accuracy: %.1f%%%n", shotsFired > 0 ? (hits * 100.0 / shotsFired) : 0.0);
 
         displayBoards();
 

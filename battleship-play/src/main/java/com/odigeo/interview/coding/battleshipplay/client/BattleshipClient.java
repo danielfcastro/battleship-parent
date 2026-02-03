@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class BattleshipClient {
 
     private static final String BASE_URL = "http://localhost:8080/battleship-service/api";
+    private static final String GAMES_PATH = "/games/";
     private static final Gson gson = new Gson();
 
     public GameResponse createGame(String playerId, boolean vsComputer) throws IOException {
@@ -32,11 +33,11 @@ public class BattleshipClient {
         GameJoinCommand command = new GameJoinCommand();
         command.setPlayerId(playerId);
 
-        post("/games/" + gameId + "/join", gson.toJson(command));
+        post(GAMES_PATH + gameId + "/join", gson.toJson(command));
     }
 
     public void deployShips(String gameId, DeployShipsCommand command) throws IOException {
-        post("/games/" + gameId + "/fields/ships/deploy", gson.toJson(command));
+        post(GAMES_PATH + gameId + "/fields/ships/deploy", gson.toJson(command));
     }
 
     public GameFireResponse fire(String gameId, String playerId, String coordinate) throws IOException {
@@ -44,7 +45,7 @@ public class BattleshipClient {
         command.setPlayerId(playerId);
         command.setCoordinate(coordinate);
 
-        String response = post("/games/" + gameId + "/fields/fire", gson.toJson(command));
+        String response = post(GAMES_PATH + gameId + "/fields/fire", gson.toJson(command));
         return gson.fromJson(response, GameFireResponse.class);
     }
 

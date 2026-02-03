@@ -21,6 +21,7 @@ public class BattleshipClient {
     private static final Logger logger = LoggerFactory.getLogger(BattleshipClient.class);
 
     private static final String BASE_URL = "http://battleship_service:8080/battleship-service/api";
+    private static final String GAMES_PATH = "/games/";
     private final WebTarget target;
 
     public BattleshipClient() {
@@ -32,7 +33,7 @@ public class BattleshipClient {
     }
 
     public void joinGame(String gameId, GameJoinCommand gameJoinCommand) {
-        Response response = target.path("/games/" + gameId + "/join")
+        Response response = target.path(GAMES_PATH + gameId + "/join")
                 .request()
                 .post(Entity.entity(gameJoinCommand, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() < 200 || response.getStatus() >= 300) {
@@ -41,7 +42,7 @@ public class BattleshipClient {
     }
 
     public void deployShips(String gameId, DeployShipsCommand deployShipsCommand) {
-        Response response = target.path("/games/" + gameId + "/fields/ships/deploy")
+        Response response = target.path(GAMES_PATH + gameId + "/fields/ships/deploy")
                 .request()
                 .post(Entity.entity(deployShipsCommand, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() < 200 || response.getStatus() >= 300) {
@@ -50,7 +51,7 @@ public class BattleshipClient {
     }
 
     public GameFireResponse fire(String gameId, GameFireCommand gameFireCommand) {
-        Response response = target.path("/games/" + gameId + "/fields/fire")
+        Response response = target.path(GAMES_PATH + gameId + "/fields/fire")
                 .request()
                 .post(Entity.entity(gameFireCommand, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() < 200 || response.getStatus() >= 300) {

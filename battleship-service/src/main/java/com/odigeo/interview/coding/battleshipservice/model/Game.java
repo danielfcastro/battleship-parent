@@ -4,6 +4,8 @@ import java.time.Instant;
 
 public class Game {
 
+    private static final String PLAYER_NOT_FOUND_MESSAGE = "Player %s does not exist in the game.";
+
     private String id;
     private String playerOneId;
     private String playerTwoId;
@@ -110,7 +112,7 @@ public class Game {
         } else if (playerId.equals(getPlayerTwoId())) {
             setPlayerTwoField(playerField);
         } else {
-            throw new IllegalArgumentException(String.format("Player %s does not exist in the game.", playerId));
+            throw new IllegalArgumentException(String.format(PLAYER_NOT_FOUND_MESSAGE, playerId));
         }
     }
 
@@ -120,7 +122,7 @@ public class Game {
         } else if (playerId.equals(getPlayerTwoId())) {
             return getPlayerTwoField();
         } else {
-            throw new IllegalArgumentException(String.format("Player %s does not exist in the game.", playerId));
+            throw new IllegalArgumentException(String.format(PLAYER_NOT_FOUND_MESSAGE, playerId));
         }
     }
 
@@ -130,7 +132,7 @@ public class Game {
         } else if (playerId.equals(getPlayerTwoId())) {
             return getPlayerOneField();
         } else {
-            throw new IllegalArgumentException(String.format("Player %s does not exist in the game.", playerId));
+            throw new IllegalArgumentException(String.format(PLAYER_NOT_FOUND_MESSAGE, playerId));
         }
     }
 
@@ -144,7 +146,7 @@ public class Game {
         } else if (playerId.equals(getPlayerTwoId())) {
             return isPlayerTurn(2);
         } else {
-            throw new IllegalArgumentException(String.format("Player %s does not exist in the game.", playerId));
+            throw new IllegalArgumentException(String.format(PLAYER_NOT_FOUND_MESSAGE, playerId));
         }
     }
 

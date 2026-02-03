@@ -37,20 +37,22 @@ public class GameService {
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    @Inject
-    private CoordinateService coordinateService;
+    private final CoordinateService coordinateService;
+    private final FieldService fieldService;
+    private final KafkaProducerService kafkaProducerService;
+    private final GameRepository repository;
+    private final ShipDeploymentValidator shipDeploymentValidator;
 
     @Inject
-    private FieldService fieldService;
-
-    @Inject
-    private KafkaProducerService kafkaProducerService;
-
-    @Inject
-    private GameRepository repository;
-
-    @Inject
-    private ShipDeploymentValidator shipDeploymentValidator;
+    public GameService(CoordinateService coordinateService, FieldService fieldService,
+                       KafkaProducerService kafkaProducerService, GameRepository repository,
+                       ShipDeploymentValidator shipDeploymentValidator) {
+        this.coordinateService = coordinateService;
+        this.fieldService = fieldService;
+        this.kafkaProducerService = kafkaProducerService;
+        this.repository = repository;
+        this.shipDeploymentValidator = shipDeploymentValidator;
+    }
 
     public Game newGame(GameStartCommand command) {
         Game game = new Game();
