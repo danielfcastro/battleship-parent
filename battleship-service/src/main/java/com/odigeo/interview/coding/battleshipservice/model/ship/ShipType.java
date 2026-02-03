@@ -10,7 +10,7 @@ public enum ShipType {
             return new Destroyer();
         }
     },
-    SUBMARINE("Submarine", 3) {
+    SUBMARINE("Submarine", 1) {
         @Override
         public Ship newInstance() {
             return new Submarine();

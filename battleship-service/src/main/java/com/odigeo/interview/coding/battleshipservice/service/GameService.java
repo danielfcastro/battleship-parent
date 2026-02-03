@@ -142,7 +142,7 @@ public class GameService {
             cell.hit();
             Ship ship = cell.getShip();
             if (fieldService.isShipSunk(field, ship)) {
-                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK);
+                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK, ship.getShipType().getShipTypeName());
                 if (fieldService.allShipsSunk(field)) {
                     response.setGameWon(true);
                     game.setWinner(command.getPlayerId());
