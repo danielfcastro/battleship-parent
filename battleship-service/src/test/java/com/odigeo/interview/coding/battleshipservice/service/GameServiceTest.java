@@ -50,8 +50,6 @@ public class GameServiceTest {
     @Mock
     private FieldService fieldService;
     @Mock
-    private ShipDeploymentValidator shipDeploymentValidator;
-    @Mock
     private KafkaProducerService kafkaProducerService;
     @Mock
     private GameRepositoryImpl gameRepository;
