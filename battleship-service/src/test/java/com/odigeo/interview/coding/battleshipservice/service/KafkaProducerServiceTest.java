@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 
 import javax.resource.ResourceException;
 
-import static org.testng.Assert.*;
 
 public class KafkaProducerServiceTest {
 

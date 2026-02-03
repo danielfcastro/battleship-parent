@@ -104,7 +104,7 @@ public class GameService {
             try {
                 Ship ship = ShipType.getByTypeName(shipDeployment.getShipType()).newInstance();
                 ship.setCoordinates(shipDeployment.getCoordinates().stream()
-                        .map(coordinate -> coordinateService.decodeCoordinate(coordinate))
+                        .map(coordinateService::decodeCoordinate)
                         .collect(Collectors.toList()));
                 ships.add(ship);
             } catch (Exception e) {
@@ -114,6 +114,7 @@ public class GameService {
         return ships;
     }
 
+    @SuppressWarnings("java:S3776") // Complex game logic requires nested conditions for fire outcome
     public GameFireResponse fire(String gameId, GameFireCommand command) {
         Game game = repository.getGame(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
 

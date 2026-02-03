@@ -41,17 +41,17 @@ public class KafkaMDB implements KafkaListener {
     }
 
     @OnRecord( topics={"battleship.game.new"})
-    public void onGameNew(ConsumerRecord<String, String> record) {
-        logger.debug("Handled message on topic battleship.game.new: {}", record);
-        GameCreatedEvent gameCreated = new Gson().fromJson(record.value().toString(), GameCreatedEvent.class);
+    public void onGameNew(ConsumerRecord<String, String> consumerRecord) {
+        logger.debug("Handled message on topic battleship.game.new: {}", consumerRecord);
+        GameCreatedEvent gameCreated = new Gson().fromJson(consumerRecord.value(), GameCreatedEvent.class);
         battleshipService.joinGame(gameCreated.getGameId());
         battleshipService.deployShips(gameCreated.getGameId());
     }
 
     @OnRecord( topics={"battleship.game.field.fire"})
-    public void onGameFieldFire(ConsumerRecord<String, String> record) {
-        logger.debug("Handled message on topic battleship.game.field.fire: {}", record);
-        GameFireEvent gameFire = new Gson().fromJson(record.value().toString(), GameFireEvent.class);
+    public void onGameFieldFire(ConsumerRecord<String, String> consumerRecord) {
+        logger.debug("Handled message on topic battleship.game.field.fire: {}", consumerRecord);
+        GameFireEvent gameFire = new Gson().fromJson(consumerRecord.value(), GameFireEvent.class);
         battleshipService.fire(gameFire.getGameId());
     }
 

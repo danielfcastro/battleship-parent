@@ -4,6 +4,7 @@ import com.odigeo.interview.coding.battleshipservice.model.Game;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -53,8 +54,8 @@ public class GameRepositoryImplTest {
     public void testGetGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        assertFalse(gameRepository.getGames().isEmpty());
         assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
+        assertEquals(mygame.getId(), gameRepository.getGame(mygame.getId()).get().getId());
     }
 
 

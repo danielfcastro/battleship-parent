@@ -47,12 +47,12 @@ public class ShipPlacementStrategy {
 
             List<String> coordinates = generateCoordinates(row, col, shipType.getLength(), horizontal);
 
-            if (coordinates != null && !hasOverlap(coordinates, occupied)) {
+            if (!coordinates.isEmpty() && !hasOverlap(coordinates, occupied)) {
                 return new ShipPlacement(shipType.getTypeName(), coordinates);
             }
         }
 
-        throw new RuntimeException("Failed to place " + shipType.getTypeName() + " after " + maxAttempts + " attempts");
+        throw new IllegalStateException("Failed to place " + shipType.getTypeName() + " after " + maxAttempts + " attempts");
     }
 
     private List<String> generateCoordinates(int startRow, int startCol, int length, boolean horizontal) {
@@ -64,7 +64,7 @@ public class ShipPlacementStrategy {
 
             // Check bounds
             if (row >= Board.BOARD_SIZE || col >= Board.BOARD_SIZE) {
-                return null;
+                return List.of(); // Return empty list instead of null
             }
 
             coordinates.add(Board.encodeCoordinate(row, col));
@@ -121,7 +121,7 @@ public class ShipPlacementStrategy {
 
             List<String> coordinates = generateCoordinates(row, col, shipType.getLength(), horizontal);
 
-            if (coordinates != null && !hasOverlap(coordinates, occupied)) {
+            if (!coordinates.isEmpty() && !hasOverlap(coordinates, occupied)) {
                 return new ShipPlacement(shipType.getTypeName(), coordinates);
             }
         }

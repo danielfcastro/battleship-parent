@@ -63,7 +63,7 @@ public class Board {
         }
         return targets;
     }
-
+    @SuppressWarnings("java:S106")
     public void display() {
         System.out.println("\n    A B C D E F G H I J");
         System.out.println("  +---------------------+");
@@ -130,6 +130,7 @@ public class Board {
         return hits;
     }
 
+    @SuppressWarnings("java:S1192") // String literals are intentional for CLI display formatting
     public String getFleetStatus() {
         StringBuilder status = new StringBuilder();
         for (Map.Entry<String, Boolean> entry : shipsStatus.entrySet()) {
@@ -144,9 +145,7 @@ public class Board {
     }
 
     public void markShipSunk(String shipType) {
-        if (shipsStatus.containsKey(shipType)) {
-            shipsStatus.put(shipType, true);
-        }
+        shipsStatus.computeIfPresent(shipType, (k, v) -> true);
     }
 
     public enum CellState {

@@ -16,7 +16,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class BattleshipClient {
 
+    @SuppressWarnings("java:S1075") // URL is localhost configuration for CLI app
     private static final String BASE_URL = "http://localhost:8080/battleship-service/api";
+    @SuppressWarnings("java:S1075") // Path constant for API endpoints
     private static final String GAMES_PATH = "/games/";
     private static final Gson gson = new Gson();
 
@@ -49,6 +51,7 @@ public class BattleshipClient {
         return gson.fromJson(response, GameFireResponse.class);
     }
 
+    @SuppressWarnings("java:S1874") // URL constructor is deprecated but sufficient for this simple CLI client
     private String post(String endpoint, String jsonBody) throws IOException {
         URL url = new URL(BASE_URL + endpoint);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

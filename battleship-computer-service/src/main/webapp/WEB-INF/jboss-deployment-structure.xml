@@ -8,9 +8,6 @@
             <module name="org.jboss.logging.jul-to-slf4j-stub" />
             <module name="org.jboss.logmanager" />
             <module name="org.jboss.logmanager.log4j" />
-<!--            <module name="org.slf4j" />-->
-<!--            <module name="org.slf4j.impl" />-->
-<!--            <module name="org.slf4j.jcl-over-slf4j" />-->
         </exclusions>
         <dependencies>
             <module name="deployment.kafka-rar.rar" export="TRUE"/>

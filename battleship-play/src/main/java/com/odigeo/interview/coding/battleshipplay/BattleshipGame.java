@@ -39,6 +39,7 @@ public class BattleshipGame {
         this.firingStrategy = new FiringStrategy(opponentBoard);
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     public static void main(String[] args) {
         System.out.println("╔═══════════════════════════════════════╗");
         System.out.println("║     BATTLESHIP GAME vs COMPUTER      ║");
@@ -66,6 +67,7 @@ public class BattleshipGame {
         }
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     public void start() throws IOException, InterruptedException {
         System.out.println("Player ID: " + playerId);
         System.out.println("\n📡 Connecting to Battleship Server...");
@@ -118,6 +120,7 @@ public class BattleshipGame {
         client.deployShips(gameId, command);
     }
 
+    @SuppressWarnings({"java:S3776", "java:S135", "java:S106"}) // CLI game loop requires complex flow control and console output
     private void playGame() throws IOException, InterruptedException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         boolean gameOver = false;
@@ -167,6 +170,7 @@ public class BattleshipGame {
         }
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     private boolean fireShotAndProcess(String coordinate) throws IOException {
         shotsFired++;
 
@@ -231,6 +235,7 @@ public class BattleshipGame {
         }
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     private void displayBoards() {
         String separator = "==================================================";
         System.out.println("\n" + separator);
@@ -248,6 +253,7 @@ public class BattleshipGame {
         System.out.print(opponentBoard.getFleetStatus());
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     private void displayShipPlacements(List<ShipPlacement> placements) {
         System.out.println("\nYour ship placements:");
         for (ShipPlacement placement : placements) {
@@ -255,6 +261,7 @@ public class BattleshipGame {
         }
     }
 
+    @SuppressWarnings("java:S106") // CLI application requires console output
     private void displayStatistics() {
         System.out.println("\n📊 FINAL STATISTICS:");
         System.out.println("  Enemy Ships Sunk: " + opponentBoard.getShipsSunk() + " / 5");

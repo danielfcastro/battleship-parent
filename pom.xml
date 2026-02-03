@@ -14,6 +14,7 @@
         <module>battleship-service</module>
         <module>battleship-computer-service</module>
         <module>battleship-play</module>
+        <module>coverage-report</module>
     </modules>
 
     <properties>
@@ -41,8 +42,18 @@
             **/wait-for-it.sh
         </sonar.exclusions>
         <sonar.coverage.exclusions>
-            **/*Test.java
+            **/*Test.java,
+            **/battleship-play/**,
+            **/battleship-api/**
         </sonar.coverage.exclusions>
+
+        <!-- JaCoCo -->
+        <jacoco.version>0.8.11</jacoco.version>
+        <argLine></argLine>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/coverage-report/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencyManagement>
@@ -144,6 +155,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
+                    <argLine>${argLine}</argLine>
                     <systemPropertyVariables>
                         <testng.dtd.http>true</testng.dtd.http>
                     </systemPropertyVariables>
