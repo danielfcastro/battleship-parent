@@ -1,9 +1,11 @@
 package com.odigeo.interview.coding.battleshipservice.repository;
 
 import com.odigeo.interview.coding.battleshipservice.model.Game;
-import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.time.Instant;
 import java.util.Random;
@@ -19,7 +21,7 @@ public class GameRepositoryImplTest {
 
     @Test
     public void testNewGame() {
-        Assert.assertTrue(gameRepository.getGames().size() == 0);
+        assertTrue(gameRepository.getGames().size() == 0);
     }
 
 
@@ -27,22 +29,22 @@ public class GameRepositoryImplTest {
     public void testSaveGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        Assert.assertTrue(gameRepository.getGames().size() > 0);
-        Assert.assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
+        assertTrue(gameRepository.getGames().size() > 0);
+        assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
     }
 
     @Test
     public void testUpdateGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        Assert.assertNotNull(gameRepository.getGame(mygame.getId()));
+        assertNotNull(gameRepository.getGame(mygame.getId()));
 
         Game finishedGame = gameRepository.getGame(mygame.getId()).get();
         finishedGame.setWinner("P1");
         finishedGame.setFinishedAt(Instant.now());
         gameRepository.saveOrUpdateGame(finishedGame);
-        Assert.assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
-        Assert.assertTrue(gameRepository.getGame(mygame.getId()).get().isFinished());
+        assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
+        assertTrue(gameRepository.getGame(mygame.getId()).get().isFinished());
     }
 
 
@@ -50,8 +52,8 @@ public class GameRepositoryImplTest {
     public void testGetGame() {
         Game mygame = buildNewGame();
         gameRepository.saveOrUpdateGame(mygame);
-        Assert.assertTrue(gameRepository.getGames().size() > 0);
-        Assert.assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
+        assertTrue(gameRepository.getGames().size() > 0);
+        assertTrue(gameRepository.getGame(mygame.getId()).isPresent());
     }
 
 
