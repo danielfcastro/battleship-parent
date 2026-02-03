@@ -58,12 +58,12 @@ public class GameServiceTest {
     @Mock
     private Game game;
 
-    @InjectMocks
     private GameService gameService;
 
     @BeforeMethod
     public void init() {
         initMocks(this);
+        gameService = new GameService(coordinateService, fieldService, kafkaProducerService, gameRepository, shipDeploymentValidator);
         when(coordinateService.decodeCoordinate(any())).thenCallRealMethod();
         when(fieldService.allShipsSunk(any())).thenCallRealMethod();
         when(fieldService.isShipSunk(any(), any())).thenCallRealMethod();

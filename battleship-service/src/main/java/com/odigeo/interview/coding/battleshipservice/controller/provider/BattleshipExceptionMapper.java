@@ -6,7 +6,6 @@ import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedExcep
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameStartException;
-import com.odigeo.interview.coding.battleshipservice.exception.KafkaProducerException;
 import com.odigeo.interview.coding.battleshipservice.exception.NotYourTurnException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipsAlreadyDeployedException;

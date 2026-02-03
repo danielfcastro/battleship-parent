@@ -20,12 +20,12 @@ public class BattleshipServiceTest {
     private CoordinateService coordinateService;
     @Mock
     private BattleshipClient battleshipClient;
-    @InjectMocks
     private BattleshipService battleshipService;
 
     @BeforeMethod
     public void init() {
         initMocks(this);
+        battleshipService = new BattleshipService(battleshipClient, coordinateService);
     }
 
     @Test

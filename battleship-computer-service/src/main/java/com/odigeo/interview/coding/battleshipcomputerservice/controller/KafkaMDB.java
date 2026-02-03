@@ -33,13 +33,15 @@ public class KafkaMDB implements KafkaListener {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaMDB.class);
 
-    @Inject
-    private BattleshipService battleshipService;
+    private final BattleshipService battleshipService;
 
-    public KafkaMDB() { }
+    @Inject
+    public KafkaMDB(BattleshipService battleshipService) {
+        this.battleshipService = battleshipService;
+    }
 
     @OnRecord( topics={"battleship.game.new"})
-    public void onGameNew(ConsumerRecord record) {
+    public void onGameNew(ConsumerRecord<String, String> record) {
         logger.debug("Handled message on topic battleship.game.new: {}", record);
         GameCreatedEvent gameCreated = new Gson().fromJson(record.value().toString(), GameCreatedEvent.class);
         battleshipService.joinGame(gameCreated.getGameId());
@@ -47,7 +49,7 @@ public class KafkaMDB implements KafkaListener {
     }
 
     @OnRecord( topics={"battleship.game.field.fire"})
-    public void onGameFieldFire(ConsumerRecord record) {
+    public void onGameFieldFire(ConsumerRecord<String, String> record) {
         logger.debug("Handled message on topic battleship.game.field.fire: {}", record);
         GameFireEvent gameFire = new Gson().fromJson(record.value().toString(), GameFireEvent.class);
         battleshipService.fire(gameFire.getGameId());

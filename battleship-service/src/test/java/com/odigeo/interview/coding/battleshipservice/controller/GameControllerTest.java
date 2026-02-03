@@ -20,7 +20,6 @@ import org.testng.annotations.Test;
 
 public class GameControllerTest {
 
-    @InjectMocks
     GameController gameController;
 
     @Mock
@@ -29,7 +28,7 @@ public class GameControllerTest {
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
+        gameController = new GameController(gameService);
     }
 
     @AfterMethod

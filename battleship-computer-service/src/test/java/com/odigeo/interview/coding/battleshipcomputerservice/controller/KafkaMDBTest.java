@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.testng.Assert.*;
 
 public class KafkaMDBTest {
 
@@ -19,12 +18,12 @@ public class KafkaMDBTest {
     private ConsumerRecord consumerRecord;
     @Mock
     private BattleshipService battleshipService;
-    @InjectMocks
     private KafkaMDB kafkaMDB;
 
     @BeforeMethod
     private void init() {
         initMocks(this);
+        kafkaMDB = new KafkaMDB(battleshipService);
         when(consumerRecord.value()).thenReturn("{\"gameId\":\"3238eef4-5e2c-4add-accb-4ca9514d5aa2\"}");
     }
 

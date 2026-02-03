@@ -48,6 +48,14 @@ public class BattleshipGame {
 
         try {
             game.start();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("\n❌ Error: " + e.getMessage());
+            System.err.println("Stack trace:");
+            for (StackTraceElement element : e.getStackTrace()) {
+                System.err.println("\t" + element);
+            }
+            System.exit(1);
         } catch (Exception e) {
             System.err.println("\n❌ Error: " + e.getMessage());
             System.err.println("Stack trace:");

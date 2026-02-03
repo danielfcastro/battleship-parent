@@ -8,7 +8,6 @@ import fish.payara.cloud.connectors.kafka.api.KafkaConnectionFactory;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.inject.Singleton;
 
 @Singleton
@@ -18,7 +17,7 @@ public class KafkaProducerService {
 
     public void publish(GameCreatedEvent event) {
         try (KafkaConnection conn = factory.createConnection()) {
-            conn.send(new ProducerRecord("battleship.game.new", event.json()));
+            conn.send(new ProducerRecord<>("battleship.game.new", event.json()));
         } catch (Exception e) {
             throw new KafkaProducerException(e);
         }
@@ -26,7 +25,7 @@ public class KafkaProducerService {
 
     public void publish(GameFireEvent event) {
         try (KafkaConnection conn = factory.createConnection()) {
-            conn.send(new ProducerRecord("battleship.game.field.fire", event.json()));
+            conn.send(new ProducerRecord<>("battleship.game.field.fire", event.json()));
         } catch (Exception e) {
             throw new KafkaProducerException(e);
         }

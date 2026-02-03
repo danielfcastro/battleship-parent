@@ -22,10 +22,12 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GameController {
 
-    @Inject
-    private GameService service;
+    private final GameService service;
 
-    public GameController() { }
+    @Inject
+    public GameController(GameService service) {
+        this.service = service;
+    }
 
     @POST
     @Path("/new")
