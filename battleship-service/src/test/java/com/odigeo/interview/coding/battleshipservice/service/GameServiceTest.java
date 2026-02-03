@@ -9,6 +9,7 @@ import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
 import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
+import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameStartException;
 import com.odigeo.interview.coding.battleshipservice.exception.NotYourTurnException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
@@ -324,6 +325,31 @@ public class GameServiceTest {
             }
         }
         return field;
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testJoinGameThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        GameJoinCommand command = new GameJoinCommand();
+        command.setPlayerId("player2");
+        gameService.joinGame("not-found", command);
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testDeployShipsThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        DeployShipsCommand command = new DeployShipsCommand();
+        command.setPlayerId("player1");
+        gameService.deployShips("not-found", command);
+    }
+
+    @Test(expectedExceptions = GameNotFoundException.class, expectedExceptionsMessageRegExp = "Game not-found not found")
+    public void testFireThrowsGameNotFoundException() {
+        when(gameRepository.getGame("not-found")).thenReturn(Optional.empty());
+        GameFireCommand command = new GameFireCommand();
+        command.setPlayerId("player1");
+        command.setCoordinate("A1");
+        gameService.fire("not-found", command);
     }
 
 }
