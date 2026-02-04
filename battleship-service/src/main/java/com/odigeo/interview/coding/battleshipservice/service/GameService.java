@@ -7,6 +7,7 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameJoinCommand;
 import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
+import com.odigeo.interview.coding.battleshipapi.event.GameFinishedEvent;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
@@ -124,9 +125,16 @@ public class GameService {
         // Execute fire logic in domain model (Rich Domain Model pattern)
         Game.FireResult fireResult = game.fire(command.getPlayerId(), coordinate, fieldService);
 
-        // Publish event for computer player if needed (after successful fire, turn has changed)
-        if (shouldNotifyComputer) {
-            kafkaProducerService.publish(new GameFireEvent(game.getId()));
+        // Check if game finished
+        if (game.isFinished()) {
+            // Publish game finished event
+            kafkaProducerService.publish(new GameFinishedEvent(game.getId(), game.getWinner()));
+            logger.info("Game {} finished. Winner: {}", game.getId(), game.getWinner());
+        } else {
+            // Publish event for computer player if needed (after successful fire, turn has changed)
+            if (shouldNotifyComputer) {
+                kafkaProducerService.publish(new GameFireEvent(game.getId()));
+            }
         }
 
         // Persist game state

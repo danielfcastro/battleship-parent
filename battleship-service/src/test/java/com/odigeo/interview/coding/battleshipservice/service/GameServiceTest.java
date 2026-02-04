@@ -7,6 +7,7 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameJoinCommand;
 import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
+import com.odigeo.interview.coding.battleshipapi.event.GameFinishedEvent;
 import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
@@ -40,8 +41,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 public class GameServiceTest {
 
@@ -305,9 +305,9 @@ public class GameServiceTest {
         assertNotNull(fireResponse);
         assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.SUNK);
         assertEquals(fireResponse.getShipTypeSunk(), "Destroyer");
-        assertEquals(fireResponse.isGameWon(), true);
-        // Kafka event is published even when game ends - computer service handles the race condition
-        verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
+        assertTrue(fireResponse.isGameWon());
+        // When game ends, we publish GameFinishedEvent (not GameFireEvent)
+        verify(kafkaProducerService, times(1)).publish(any(GameFinishedEvent.class));
         verify(gameRepository, times(1)).saveOrUpdateGame(realGame);
     }
 
