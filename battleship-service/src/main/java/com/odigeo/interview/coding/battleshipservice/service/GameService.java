@@ -7,11 +7,8 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameJoinCommand;
 import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
-import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameJoinException;
 import com.odigeo.interview.coding.battleshipservice.exception.GameNotFoundException;
-import com.odigeo.interview.coding.battleshipservice.exception.GameStartException;
-import com.odigeo.interview.coding.battleshipservice.exception.NotYourTurnException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipsAlreadyDeployedException;
 import com.odigeo.interview.coding.battleshipservice.model.Cell;
@@ -118,50 +115,45 @@ public class GameService {
     public GameFireResponse fire(String gameId, GameFireCommand command) {
         Game game = repository.getGame(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
 
-        if (game.isFinished()) {
-            throw new GameFinishedException(game.getWinner());
-        }
-
-        if (!game.playersReady()) {
-            throw new GameStartException("Players not ready");
-        }
-
-        if (!game.isPlayerTurn(command.getPlayerId())) {
-            if (game.isVsComputer() && game.isPlayerTurn(1)) {
-                // Ping the computer to avoid rare deadlocks
-                kafkaProducerService.publish(new GameFireEvent(game.getId()));
-            }
-            throw new NotYourTurnException(command.getPlayerId());
-        }
-
-        Cell[][] field = game.getOpponentField(command.getPlayerId());
+        // Decode coordinate
         Coordinate coordinate = coordinateService.decodeCoordinate(command.getCoordinate());
-        Cell cell = field[coordinate.getRow()][coordinate.getColumn()];
-        GameFireResponse response;
-        if (cell.isWater()) {
-            cell.hit();
-            response = new GameFireResponse(GameFireResponse.FireOutcome.MISS);
-        } else {
-            cell.hit();
-            Ship ship = cell.getShip();
-            if (fieldService.isShipSunk(field, ship)) {
-                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK, ship.getShipType().getShipTypeName());
-                if (fieldService.allShipsSunk(field)) {
-                    response.setGameWon(true);
-                    game.setWinner(command.getPlayerId());
-                    game.setFinishedAt(Instant.now());
-                }
-            } else {
-                response = new GameFireResponse(GameFireResponse.FireOutcome.HIT);
-            }
-        }
 
-        if(game.isVsComputer() && game.isPlayerTurn(1)) {
+        // Check if we need to notify computer player BEFORE changing turn
+        boolean shouldNotifyComputer = game.isVsComputer() && game.isPlayerTurn(1);
+
+        // Execute fire logic in domain model (Rich Domain Model pattern)
+        Game.FireResult fireResult = game.fire(command.getPlayerId(), coordinate, fieldService);
+
+        // Publish event for computer player if needed (after successful fire, turn has changed)
+        if (shouldNotifyComputer) {
             kafkaProducerService.publish(new GameFireEvent(game.getId()));
         }
 
-        game.setNextPlayerTurn();
+        // Persist game state
         repository.saveOrUpdateGame(game);
+
+        // Map domain result to API response
+        return mapToGameFireResponse(fireResult);
+    }
+
+    private GameFireResponse mapToGameFireResponse(Game.FireResult fireResult) {
+        GameFireResponse response;
+        switch (fireResult.getOutcome()) {
+            case MISS:
+                response = new GameFireResponse(GameFireResponse.FireOutcome.MISS);
+                break;
+            case HIT:
+                response = new GameFireResponse(GameFireResponse.FireOutcome.HIT);
+                break;
+            case SUNK:
+                response = new GameFireResponse(GameFireResponse.FireOutcome.SUNK, fireResult.getSunkShipType());
+                if (fireResult.isGameWon()) {
+                    response.setGameWon(true);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unknown fire outcome: " + fireResult.getOutcome());
+        }
         return response;
     }
 

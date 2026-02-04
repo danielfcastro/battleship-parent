@@ -1,6 +1,7 @@
 package com.odigeo.interview.coding.battleshipservice.service;
 
 import com.odigeo.interview.coding.battleshipservice.model.Cell;
+import com.odigeo.interview.coding.battleshipservice.model.Game;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
 
@@ -8,7 +9,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
-public class FieldService {
+public class FieldService implements Game.FieldOperations {
 
     public boolean allShipsSunk(Cell[][] field) {
         for (Cell[] row : field) {

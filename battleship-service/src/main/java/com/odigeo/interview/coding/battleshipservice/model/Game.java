@@ -1,5 +1,10 @@
 package com.odigeo.interview.coding.battleshipservice.model;
 
+import com.odigeo.interview.coding.battleshipservice.exception.GameFinishedException;
+import com.odigeo.interview.coding.battleshipservice.exception.GameStartException;
+import com.odigeo.interview.coding.battleshipservice.exception.NotYourTurnException;
+import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
+
 import java.time.Instant;
 
 public class Game {
@@ -167,5 +172,111 @@ public class Game {
 
     public boolean playerReady(String playerId) {
         return getPlayerField(playerId) != null;
+    }
+
+    /**
+     * Executes a fire action at the specified coordinate for the given player.
+     * This method encapsulates the core game logic within the domain model.
+     *
+     * @param playerId The ID of the player firing
+     * @param coordinate The coordinate to fire at
+     * @param fieldService Service to check ship status
+     * @return FireResult containing the outcome of the fire action
+     * @throws GameFinishedException if the game is already finished
+     * @throws GameStartException if both players are not ready
+     * @throws NotYourTurnException if it's not the player's turn
+     */
+    public FireResult fire(String playerId, Coordinate coordinate, FieldOperations fieldOperations) {
+        // Validation: Check game state
+        if (isFinished()) {
+            throw new GameFinishedException(getWinner());
+        }
+
+        if (!playersReady()) {
+            throw new GameStartException("Players not ready");
+        }
+
+        if (!isPlayerTurn(playerId)) {
+            throw new NotYourTurnException(playerId);
+        }
+
+        // Execute fire logic
+        Cell[][] opponentField = getOpponentField(playerId);
+        Cell cell = opponentField[coordinate.getRow()][coordinate.getColumn()];
+
+        FireResult result;
+        if (cell.isWater()) {
+            cell.hit();
+            result = new FireResult(FireOutcome.MISS, null, false, false);
+        } else {
+            cell.hit();
+            Ship ship = cell.getShip();
+            boolean shipSunk = fieldOperations.isShipSunk(opponentField, ship);
+
+            if (shipSunk) {
+                boolean allShipsSunk = fieldOperations.allShipsSunk(opponentField);
+                if (allShipsSunk) {
+                    setWinner(playerId);
+                    setFinishedAt(Instant.now());
+                    result = new FireResult(FireOutcome.SUNK, ship.getShipType().getShipTypeName(), true, true);
+                } else {
+                    result = new FireResult(FireOutcome.SUNK, ship.getShipType().getShipTypeName(), true, false);
+                }
+            } else {
+                result = new FireResult(FireOutcome.HIT, null, false, false);
+            }
+        }
+
+        setNextPlayerTurn();
+        return result;
+    }
+
+    /**
+     * Value object representing the result of a fire action.
+     */
+    public static class FireResult {
+        private final FireOutcome outcome;
+        private final String sunkShipType;
+        private final boolean shipSunk;
+        private final boolean gameWon;
+
+        public FireResult(FireOutcome outcome, String sunkShipType, boolean shipSunk, boolean gameWon) {
+            this.outcome = outcome;
+            this.sunkShipType = sunkShipType;
+            this.shipSunk = shipSunk;
+            this.gameWon = gameWon;
+        }
+
+        public FireOutcome getOutcome() {
+            return outcome;
+        }
+
+        public String getSunkShipType() {
+            return sunkShipType;
+        }
+
+        public boolean isShipSunk() {
+            return shipSunk;
+        }
+
+        public boolean isGameWon() {
+            return gameWon;
+        }
+    }
+
+    /**
+     * Enum representing the possible outcomes of a fire action.
+     */
+    public enum FireOutcome {
+        HIT, MISS, SUNK
+    }
+
+    /**
+     * Interface for field service operations needed by Game.
+     * This allows Game to depend on an abstraction rather than a concrete implementation (DIP).
+     */
+    public interface FieldOperations {
+        boolean isShipSunk(Cell[][] field, Ship ship);
+        boolean allShipsSunk(Cell[][] field);
     }
 }

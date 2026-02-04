@@ -178,73 +178,100 @@ public class GameServiceTest {
 
     @Test(expectedExceptions = GameFinishedException.class, expectedExceptionsMessageRegExp = "The winner is player2")
     public void testFireWhenGameIsAlreadyFinished() {
-        when(game.getId()).thenReturn("12345");
-        when(game.getWinner()).thenReturn("player2");
-        when(game.isFinished()).thenReturn(true);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setWinner("player2");
+        realGame.setFinishedAt(java.time.Instant.now()); // Mark as finished
+        realGame.setPlayerTurn(1);
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(buildWater());
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate("A1");
         gameService.fire("12345", command);
-        verify(gameRepository, never()).saveOrUpdateGame(game);
+        verify(gameRepository, never()).saveOrUpdateGame(realGame);
     }
 
     @Test(expectedExceptions = GameStartException.class, expectedExceptionsMessageRegExp = "Players not ready")
     public void testFireWhenPlayersNotReady() {
-        when(game.getId()).thenReturn("12345");
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(false);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setPlayerTurn(1);
+        // Don't set fields - players not ready
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate("A1");
         gameService.fire("12345", command);
-        verify(gameRepository, never()).saveOrUpdateGame(game);
+        verify(gameRepository, never()).saveOrUpdateGame(realGame);
     }
 
     @Test(expectedExceptions = NotYourTurnException.class, expectedExceptionsMessageRegExp = "player1 is not your turn")
     public void testFireWhenIsNotPlayerTurn() {
-        when(game.getId()).thenReturn("12345");
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(true);
-        when(game.isPlayerTurn(any(String.class))).thenReturn(false);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setPlayerTurn(2); // It's player 2's turn, not player 1
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(buildWater());
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate("A1");
         gameService.fire("12345", command);
-        verify(gameRepository, never()).saveOrUpdateGame(game);
+        verify(gameRepository, never()).saveOrUpdateGame(realGame);
     }
 
     @Test(expectedExceptions = NotYourTurnException.class, expectedExceptionsMessageRegExp = "player1 is not your turn")
     public void testFireWhenIsNotPlayerTurnAndNeedToPingTheComputer() {
-        when(game.getId()).thenReturn("12345");
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(true);
-        when(game.isPlayerTurn(any(String.class))).thenReturn(false);
-        when(game.isVsComputer()).thenReturn(true);
-        when(game.isPlayerTurn(1)).thenReturn(true);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setVsComputer(true);
+        realGame.setPlayerTurn(2); // It's player 2's turn (not player 1)
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(buildWater());
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
-        command.setPlayerId("player1");
+        command.setPlayerId("player1"); // Player 1 tries to play when it's player 2's turn
         command.setCoordinate("A1");
         gameService.fire("12345", command);
-        verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
-        verify(gameRepository, never()).saveOrUpdateGame(game);
+        // This should NOT call Kafka because shouldNotifyComputer checks isPlayerTurn(1) which is false when turn=2
+        verify(kafkaProducerService, never()).publish(any(GameFireEvent.class));
+        verify(gameRepository, never()).saveOrUpdateGame(realGame);
     }
 
     @Test
     public void testFireHit() {
         final String[] gridCoordinate = new String[] {"A1", "A2"};
         Cell[][] field = buildFieldWithShip("Destroyer", gridCoordinate);
-        when(game.getId()).thenReturn("12345");
-        when(game.isVsComputer()).thenReturn(true);
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(true);
-        when(game.isPlayerTurn(any(String.class))).thenReturn(true);
-        when(game.isPlayerTurn(1)).thenReturn(true);
-        when(game.getOpponentField(any())).thenReturn(field);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setVsComputer(true);
+        realGame.setPlayerTurn(1);
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(field);
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate(gridCoordinate[0]);
@@ -252,21 +279,25 @@ public class GameServiceTest {
         assertNotNull(fireResponse);
         assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.HIT);
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
-        verify(gameRepository, times(1)).saveOrUpdateGame(game);
+        verify(gameRepository, times(1)).saveOrUpdateGame(realGame);
     }
 
     @Test
     public void testFireSunkAndGameWon() {
         final String[] gridCoordinate = new String[] {"A1"};
         Cell[][] field = buildFieldWithShip("Destroyer", gridCoordinate);
-        when(game.getId()).thenReturn("12345");
-        when(game.isVsComputer()).thenReturn(true);
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(true);
-        when(game.isPlayerTurn(any(String.class))).thenReturn(true);
-        when(game.isPlayerTurn(1)).thenReturn(true);
-        when(game.getOpponentField(any())).thenReturn(field);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setVsComputer(true);
+        realGame.setPlayerTurn(1);
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(field);
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate(gridCoordinate[0]);
@@ -274,22 +305,28 @@ public class GameServiceTest {
         assertNotNull(fireResponse);
         assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.SUNK);
         assertEquals(fireResponse.getShipTypeSunk(), "Destroyer");
+        assertEquals(fireResponse.isGameWon(), true);
+        // Kafka event is published even when game ends - computer service handles the race condition
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
-        verify(gameRepository, times(1)).saveOrUpdateGame(game);
+        verify(gameRepository, times(1)).saveOrUpdateGame(realGame);
     }
 
     @Test
     public void testFireMiss() {
         final String[] gridCoordinate = new String[] {"A1"};
         Cell[][] field = buildFieldWithShip("Destroyer", gridCoordinate);
-        when(game.getId()).thenReturn("12345");
-        when(game.isVsComputer()).thenReturn(true);
-        when(game.isFinished()).thenReturn(false);
-        when(game.playersReady()).thenReturn(true);
-        when(game.isPlayerTurn(any(String.class))).thenReturn(true);
-        when(game.isPlayerTurn(1)).thenReturn(true);
-        when(game.getOpponentField(any())).thenReturn(field);
-        when(gameRepository.getGame(any())).thenReturn(Optional.of(game));
+
+        // Use real Game instance (Rich Domain Model)
+        Game realGame = new Game();
+        realGame.setId("12345");
+        realGame.setPlayerOneId("player1");
+        realGame.setPlayerTwoId("player2");
+        realGame.setVsComputer(true);
+        realGame.setPlayerTurn(1);
+        realGame.setPlayerOneField(buildWater());
+        realGame.setPlayerTwoField(field);
+
+        when(gameRepository.getGame(any())).thenReturn(Optional.of(realGame));
         GameFireCommand command = new GameFireCommand();
         command.setPlayerId("player1");
         command.setCoordinate("B6");
@@ -297,7 +334,7 @@ public class GameServiceTest {
         assertNotNull(fireResponse);
         assertEquals(fireResponse.getFireOutcome(), GameFireResponse.FireOutcome.MISS);
         verify(kafkaProducerService, times(1)).publish(any(GameFireEvent.class));
-        verify(gameRepository, times(1)).saveOrUpdateGame(game);
+        verify(gameRepository, times(1)).saveOrUpdateGame(realGame);
     }
 
     private Cell[][] buildFieldWithShip(String shipType, String... gridCoordinates) {

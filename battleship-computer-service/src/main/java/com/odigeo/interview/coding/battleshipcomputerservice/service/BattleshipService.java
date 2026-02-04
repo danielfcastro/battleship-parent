@@ -33,11 +33,21 @@ public class BattleshipService {
     }
 
     public void fire(String gameId) {
-        final String coordinate = thinkWhereToFire();
-        GameFireResponse gameFireResponse = client.fire(gameId, BattleshipClientCommandBuilder.buildGameFireCommand(coordinate));
-        logger.info("[gameId={}] Computer {} the ship on {}", gameId, gameFireResponse.getFireOutcome(), coordinate);
-        if (gameFireResponse.isGameWon()) {
-            logger.info("[gameId={}] Computer WON the game", gameId);
+        try {
+            final String coordinate = thinkWhereToFire();
+            GameFireResponse gameFireResponse = client.fire(gameId, BattleshipClientCommandBuilder.buildGameFireCommand(coordinate));
+            logger.info("[gameId={}] Computer {} the ship on {}", gameId, gameFireResponse.getFireOutcome(), coordinate);
+            if (gameFireResponse.isGameWon()) {
+                logger.info("[gameId={}] Computer WON the game", gameId);
+            }
+        } catch (Exception e) {
+            // Game might have finished while event was in Kafka queue (race condition)
+            // This is expected behavior in async systems - log and continue
+            if (e.getMessage() != null && e.getMessage().contains("GameFinishedException")) {
+                logger.debug("[gameId={}] Game already finished - ignoring fire event", gameId);
+            } else {
+                logger.warn("[gameId={}] Error firing: {}", gameId, e.getMessage());
+            }
         }
     }
 
