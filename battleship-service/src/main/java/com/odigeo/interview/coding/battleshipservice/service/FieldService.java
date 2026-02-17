@@ -1,28 +1,30 @@
 package com.odigeo.interview.coding.battleshipservice.service;
 
 import com.odigeo.interview.coding.battleshipservice.model.Cell;
-import com.odigeo.interview.coding.battleshipservice.model.Coordinate;
+import com.odigeo.interview.coding.battleshipservice.model.Game;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import com.odigeo.interview.coding.battleshipservice.util.GameConfiguration;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Singleton
-public class FieldService {
-
-    @Inject
-    private CoordinateService coordinateService;
+public class FieldService implements Game.FieldOperations {
 
     public boolean allShipsSunk(Cell[][] field) {
-        return false;
+        for (Cell[] row : field) {
+            for (Cell cell : row) {
+                if (!cell.isWater() && !cell.isHit()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public boolean isShipSunk(Cell[][] field, Ship ship) {
-        return false;
+        return ship.getCoordinates().stream()
+                .allMatch(coordinate -> field[coordinate.getRow()][coordinate.getColumn()].isHit());
     }
 
     public Cell[][] buildField(List<Ship> shipsDeployment) {

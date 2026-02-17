@@ -23,9 +23,12 @@ import javax.ws.rs.core.MediaType;
 public class GameController {
 
     @Inject
+    @SuppressWarnings("java:S6813") // Field injection required by CDI - WildFly needs default constructor
     private GameService service;
 
-    public GameController() { }
+    public GameController() {
+        // Default constructor required by CDI
+    }
 
     @POST
     @Path("/new")

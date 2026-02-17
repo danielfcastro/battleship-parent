@@ -7,9 +7,8 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/engineering")
 @Produces(MediaType.TEXT_PLAIN)
+@SuppressWarnings("java:S1192") // Simple health check endpoint duplicated across microservices
 public class EngineeringController {
-
-    public EngineeringController() { }
 
     @GET
     @Path("/ping")

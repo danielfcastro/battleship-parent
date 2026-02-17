@@ -3,7 +3,6 @@ package com.odigeo.interview.coding.battleshipservice.util;
 import com.odigeo.interview.coding.battleshipservice.exception.ShipDeploymentException;
 import com.odigeo.interview.coding.battleshipservice.model.ship.Ship;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.util.List;

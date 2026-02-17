@@ -2,7 +2,6 @@ package com.odigeo.interview.coding.battleshipcomputerservice.controller;
 
 import com.odigeo.interview.coding.battleshipcomputerservice.service.BattleshipService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.testng.Assert.*;
 
 public class KafkaMDBTest {
 
@@ -19,12 +17,20 @@ public class KafkaMDBTest {
     private ConsumerRecord consumerRecord;
     @Mock
     private BattleshipService battleshipService;
-    @InjectMocks
     private KafkaMDB kafkaMDB;
 
     @BeforeMethod
     private void init() {
         initMocks(this);
+        kafkaMDB = new KafkaMDB();
+        // Inject mocked service via reflection
+        try {
+            java.lang.reflect.Field field = KafkaMDB.class.getDeclaredField("battleshipService");
+            field.setAccessible(true);
+            field.set(kafkaMDB, battleshipService);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         when(consumerRecord.value()).thenReturn("{\"gameId\":\"3238eef4-5e2c-4add-accb-4ca9514d5aa2\"}");
     }
 

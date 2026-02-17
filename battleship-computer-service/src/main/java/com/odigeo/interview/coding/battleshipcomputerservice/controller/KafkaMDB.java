@@ -3,6 +3,7 @@ package com.odigeo.interview.coding.battleshipcomputerservice.controller;
 import com.google.gson.Gson;
 import com.odigeo.interview.coding.battleshipapi.event.GameCreatedEvent;
 import com.odigeo.interview.coding.battleshipapi.event.GameFireEvent;
+import com.odigeo.interview.coding.battleshipapi.event.GameFinishedEvent;
 import com.odigeo.interview.coding.battleshipcomputerservice.service.BattleshipService;
 import fish.payara.cloud.connectors.kafka.api.KafkaListener;
 import fish.payara.cloud.connectors.kafka.api.OnRecord;
@@ -18,7 +19,7 @@ import javax.inject.Inject;
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "clientId", propertyValue = "battleship-computer-service"),
         @ActivationConfigProperty(propertyName = "groupIdConfig", propertyValue = "battleship.computer"),
-        @ActivationConfigProperty(propertyName = "topics", propertyValue = "battleship.game.new,battleship.game.field.fire"),
+        @ActivationConfigProperty(propertyName = "topics", propertyValue = "battleship.game.new,battleship.game.field.fire,battleship.game.finished"),
         @ActivationConfigProperty(propertyName = "bootstrapServersConfig", propertyValue = "kafka:29092"),
         @ActivationConfigProperty(propertyName = "retryBackoff", propertyValue = "1000"),
         @ActivationConfigProperty(propertyName = "autoCommitInterval", propertyValue = "100"),
@@ -34,23 +35,33 @@ public class KafkaMDB implements KafkaListener {
     private static final Logger logger = LoggerFactory.getLogger(KafkaMDB.class);
 
     @Inject
+    @SuppressWarnings("java:S6813") // Field injection required by EJB - MessageDriven beans need default constructor
     private BattleshipService battleshipService;
 
-    public KafkaMDB() { }
+    public KafkaMDB() {
+        // Default constructor required by EJB
+    }
 
     @OnRecord( topics={"battleship.game.new"})
-    public void onGameNew(ConsumerRecord record) {
-        logger.debug("Handled message on topic battleship.game.new: {}", record);
-        GameCreatedEvent gameCreated = new Gson().fromJson(record.value().toString(), GameCreatedEvent.class);
+    public void onGameNew(ConsumerRecord<String, String> consumerRecord) {
+        logger.debug("Handled message on topic battleship.game.new: {}", consumerRecord);
+        GameCreatedEvent gameCreated = new Gson().fromJson(consumerRecord.value(), GameCreatedEvent.class);
         battleshipService.joinGame(gameCreated.getGameId());
         battleshipService.deployShips(gameCreated.getGameId());
     }
 
     @OnRecord( topics={"battleship.game.field.fire"})
-    public void onGameFieldFire(ConsumerRecord record) {
-        logger.debug("Handled message on topic battleship.game.field.fire: {}", record);
-        GameFireEvent gameFire = new Gson().fromJson(record.value().toString(), GameFireEvent.class);
+    public void onGameFieldFire(ConsumerRecord<String, String> consumerRecord) {
+        logger.debug("Handled message on topic battleship.game.field.fire: {}", consumerRecord);
+        GameFireEvent gameFire = new Gson().fromJson(consumerRecord.value(), GameFireEvent.class);
         battleshipService.fire(gameFire.getGameId());
+    }
+
+    @OnRecord( topics={"battleship.game.finished"})
+    public void onGameFinished(ConsumerRecord<String, String> consumerRecord) {
+        logger.debug("Handled message on topic battleship.game.finished: {}", consumerRecord);
+        GameFinishedEvent gameFinished = new Gson().fromJson(consumerRecord.value(), GameFinishedEvent.class);
+        logger.info("[gameId={}] Game FINISHED. Winner: {}", gameFinished.getGameId(), gameFinished.getWinner());
     }
 
 }

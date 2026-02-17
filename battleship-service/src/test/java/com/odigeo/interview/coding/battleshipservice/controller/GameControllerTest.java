@@ -9,7 +9,6 @@ import com.odigeo.interview.coding.battleshipapi.contract.GameStartCommand;
 import com.odigeo.interview.coding.battleshipservice.model.Game;
 import com.odigeo.interview.coding.battleshipservice.service.GameService;
 import com.odigeo.interview.coding.battleshipservice.util.ShipDeploymentBuilder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -20,7 +19,6 @@ import org.testng.annotations.Test;
 
 public class GameControllerTest {
 
-    @InjectMocks
     GameController gameController;
 
     @Mock
@@ -29,7 +27,15 @@ public class GameControllerTest {
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
+        gameController = new GameController();
+        // Inject mocked service via reflection
+        try {
+            java.lang.reflect.Field field = GameController.class.getDeclaredField("service");
+            field.setAccessible(true);
+            field.set(gameController, gameService);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterMethod
@@ -70,7 +76,7 @@ public class GameControllerTest {
         GameStartCommand gameStartCommand = new GameStartCommand();
         Game game = new Game();
         createGame(gameStartCommand, game);
-        GameResponse gameResponse = gameController.newGame(gameStartCommand);
+        gameController.newGame(gameStartCommand);
         DeployShipsCommand deployShipsCommand = new DeployShipsCommand();
         deployShipsCommand.setPlayerId(gameStartCommand.getPlayerId());
         deployShipsCommand.setShipsDeploy(ShipDeploymentBuilder.buildShipsDeployment());
@@ -82,7 +88,7 @@ public class GameControllerTest {
         GameStartCommand gameStartCommand = new GameStartCommand();
         Game game = new Game();
         createGame(gameStartCommand, game);
-        GameResponse gameResponse = gameController.newGame(gameStartCommand);
+        gameController.newGame(gameStartCommand);
         GameFireCommand gameFireCommand = new GameFireCommand();
         gameFireCommand.setCoordinate("0,0");
         gameFireCommand.setPlayerId(gameStartCommand.getPlayerId());

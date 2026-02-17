@@ -1,7 +1,6 @@
 package com.odigeo.interview.coding.battleshipcomputerservice.service;
 
 import com.odigeo.interview.coding.battleshipapi.contract.GameFireResponse;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,12 +19,12 @@ public class BattleshipServiceTest {
     private CoordinateService coordinateService;
     @Mock
     private BattleshipClient battleshipClient;
-    @InjectMocks
     private BattleshipService battleshipService;
 
     @BeforeMethod
     public void init() {
         initMocks(this);
+        battleshipService = new BattleshipService(battleshipClient, coordinateService);
     }
 
     @Test
